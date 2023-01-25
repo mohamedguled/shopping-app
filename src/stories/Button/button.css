@@ -1,0 +1,70 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.storybook-button {
+  @apply flex justify-center items-center gap-x-1 h-12 px-4 rounded-lg uppercase font-semibold cursor-pointer border border-transparent;
+  font-size: 15px;
+}
+
+.storybook-button--green {
+  background-color: hsl(172, 66%, 50%) !important;
+  color: rgb(0, 51, 44);
+  /* transition: all;
+  transition-duration: 100ms;
+  transition-delay: 50ms;
+  transition-timing-function: ease-in; */
+}
+
+.storybook-button--gray {
+  background-color: hsl(215, 25%, 27%) !important;
+  color: #b3c5ef;
+}
+
+.storybook-button--gray:hover,
+.storybook-button--gray:active {
+  background-color: hsl(215, 25%, 20%)!important;
+}
+.storybook-button--green:hover,
+.storybook-button--green:active {
+  background-color: hsl(172, 66%, 45%)!important;
+}
+
+.storybook-button--blue {
+  background-color: hsl(198, 93%, 50%) !important;
+  color: rgb(0, 43, 61);
+}
+.storybook-button--blue:hover,
+.storybook-button--blue:active {
+  background-color: hsl(198, 93%, 44%)!important;
+}
+
+.storybook-button--red {
+  background-color: hsl(351, 95%, 68%) !important;
+  color: rgb(71, 0, 11);
+}
+
+.storybook-button--red:hover,
+.storybook-button--red:active {
+  background-color: hsl(351, 95%, 64%)!important;
+}
+
+.storybook-button--dark {
+  background-color: hsl(217, 33%, 17%) !important;
+  color: hsl(217, 77%, 83%);
+}
+.storybook-button--dark:hover,
+.storybook-button--dark:active {
+  background-color: hsl(217, 33%, 20%)!important;
+}
+
+.storybook-button--yellow {
+  background-color: hsl(41, 88%, 64%) !important;
+  color: rgb(66, 45, 0);
+}
+
+.storybook-button--yellow:hover,
+.storybook-button--yellow:active {
+  background-color: hsl(41, 88%, 55%)!important;
+}

@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.storybook-button_group {
+  @apply inline-flex items-center;
+}
+
+.storybook-button_group button:first-child:not(:last-child),
+.storybook-button_group button:first-child:not(:last-child) {
+  @apply rounded-tl-lg rounded-bl-lg rounded-tr-none rounded-br-none;
+}
+
+.storybook-button_group button:last-child:not(:first-child),
+.storybook-button_group button:last-child:not(:first-child) {
+  @apply rounded-tr-lg rounded-br-lg rounded-tl-none rounded-bl-none;
+}
+
+.storybook-button_group button:not(:first-child):not(:last-child),
+.storybook-button_group button:not(:first-child):not(:last-child) {
+  @apply rounded-none;
+}
+
+.storybook-button_group-gap {
+  @apply gap-x-1;
+}

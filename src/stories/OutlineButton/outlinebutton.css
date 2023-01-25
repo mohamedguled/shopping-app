@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --button-green: hsl(172, 66%, 50%);
+  --button-gray: hsl(215, 25%, 27%);
+  --button-blue: hsl(198, 93%, 44%);
+  --button-red: hsl(351, 95%, 68%);
+  --button-yellow: hsl(41, 88%, 64%);
+}
+
+.storybook-outlinebutton {
+  @apply text-xl flex justify-center items-center gap-x-1 h-8 w-8 rounded-lg uppercase font-semibold cursor-pointer border-2;
+  /* font-size: 20px; */
+}
+
+.storybook-outlinebutton--green {
+  border-color: var(--button-green);
+  color: var(--button-green);
+}
+
+.storybook-outlinebutton--gray {
+  border-color: var(--button-gray);
+  color: var(--button-gray);
+}
+
+.storybook-outlinebutton--blue {
+  border-color: var(--button-blue);
+  color: var(--button-blue);
+}
+
+.storybook-outlinebutton--red {
+  border-color: var(--button-red);
+  color: var(--button-red);
+}
+
+.storybook-outlinebutton--yellow {
+  border-color: var(--button-yellow);
+  color: var(--button-yellow);
+}

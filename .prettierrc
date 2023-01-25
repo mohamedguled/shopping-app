@@ -1,0 +1,7 @@
+{
+  "editorconfig": true,
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "avoid",
+  "singleQuote": true
+}
