@@ -39,7 +39,7 @@ export default function Item({
     <div
       className={[
         'relative rounded-md flex pr-3',
-        `${isCompleted ? 'bg-neutral/60' : 'bg-primary-content'}`,
+        `${isCompleted ? 'bg-card-grayed' : 'bg-card-base'}`,
       ].join(' ')}
       style={{ width: 'min(100%, 900px)' }}
     >
@@ -48,7 +48,7 @@ export default function Item({
           <section className="flex items-center gap-2">
             <div
               style={{
-                backgroundImage: `url('/${firstLetter.lowerCase(name)}.jpg')`,
+                backgroundImage: `url('/placeholders/${firstLetter.lowerCase(name)}.jpg')`,
               }}
               className={[
                 'w-[110px] aspect-square bg-cover bg-no-repeat bg-center rounded-tl-md rounded-bl-md',

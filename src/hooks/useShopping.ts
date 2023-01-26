@@ -1,8 +1,17 @@
+import { produce } from 'immer';
+import { useEffectOnce } from 'usehooks-ts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Categories, CategoryType, Items, ItemType } from '../data';
+import {
+  BasicItemType,
+  Categories,
+  CategoryType,
+  Items,
+  ItemType,
+} from '../data';
 import Localbase from 'localbase';
 const db = new Localbase('db');
 import { z } from 'zod';
+import { forEach } from 'lodash';
 
 export default function useShoppingCategories(
   name: string,
@@ -95,15 +104,27 @@ export default function useShoppingCategories(
   }, [name, categoryName]);
 
   async function Generate() {
-    for (let i = 0; i < Items.length; i++) {
-      const item: ItemType = Items[i];
-      item.id = i + 1;
-      await db.collection(name).add(item, item.name);
-    }
-    for (let y = 0; y < Categories.length; y++) {
-      const category: CategoryType = Categories[y];
-      await db.collection(categoryName).add(category, category.name);
-    }
+    // for (let i = 0; i < Items.length; i++) {
+    //   const item: BasicItemType = Items[i];
+    //   item.id = i + 1;
+    //   await db.collection(name).add(item, item.name);
+    // }
+    // for (let y = 0; y < Categories.length; y++) {
+    //   const category: CategoryType = Categories[y];
+    //   await db.collection(categoryName).add(category, category.name);
+    // }
+
+    forEach(Items, async item => {
+      const newItem = produce(item, draft => {
+        draft.amount = 1;
+        draft.isCompleted = false;
+      });
+      console.log(newItem);
+      await db.collection(name).add(newItem, newItem.name);
+    });
+    forEach(Categories, async category => {
+      await db.collection(name).add(category, category.name);
+    });
     getData();
   }
 

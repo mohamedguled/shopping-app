@@ -10,6 +10,8 @@ import { HiPlus, HiMinus } from 'react-icons/hi';
 import type { QueryClient } from 'react-query/types/core/queryClient';
 import { useMutation } from 'react-query';
 import Localbase from 'localbase';
+import { formatText } from '../utils/formatText';
+import { useEffectOnce } from 'usehooks-ts';
 
 const db = new Localbase('db');
 db.config.debug = false;
@@ -29,6 +31,7 @@ export default function ItemComponent({
   category?: CategoryType;
   queryClient: QueryClient;
 }) {
+ 
   const updateAmount = async (newAmount: number) => {
     return await db.collection('shopping').doc({ id: id }).update({
       amount: newAmount,
@@ -73,7 +76,7 @@ export default function ItemComponent({
     <div
       className={[
         'relative rounded-md flex pr-3 transition-all duration-150',
-        `${isCompleted ? 'bg-neutral/60' : 'bg-primary-content'}`,
+        `${isCompleted ? 'bg-card-grayed' : 'bg-card-base'}`,
       ].join(' ')}
       style={{ width: 'min(100%, 900px)' }}
     >
@@ -81,7 +84,9 @@ export default function ItemComponent({
         <section className="flex items-center gap-2">
           <div
             style={{
-              backgroundImage: `url('/${firstLetter.lowerCase(name)}.jpg')`,
+              backgroundImage: `url('/${formatText.dash(
+                firstLetter.lowerCase(name)
+              )}.jpg')`,
             }}
             className={[
               'w-[110px] aspect-square bg-cover bg-no-repeat bg-center rounded-tl-md rounded-bl-md',
@@ -98,7 +103,11 @@ export default function ItemComponent({
               {name}
             </h3>
             {category?.name && (
-              <div className="flex items-center">
+              <div
+                className={`flex items-center ${
+                  isCompleted ? 'text-gray-400' : 'text-sky-300'
+                }`}
+              >
                 <AiFillTags />
                 <p>{category.name}</p>
               </div>

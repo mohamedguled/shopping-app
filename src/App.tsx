@@ -1,15 +1,10 @@
-import useShopping from './hooks/useShopping';
-import Item from './features/Item';
-import { CategoryType, ItemType } from './data';
-import { useEffect } from 'react';
-import useTabs, { TabOptions } from './hooks/useTabs';
-import useColors from './hooks/useColors';
-import DeletedItem from './features/DeletedItem';
-import { Toaster } from 'react-hot-toast';
-import ControlButtons from './features/ControlButtons';
-import Settings from './features/Settings';
-import Stats from './features/Stats';
-
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { CategoryType, SafeItemType } from './data';
+import ItemComponent from './features/ItemComponent';
+import { TabOptions } from './hooks/useTabs';
+import { Button } from './stories';
+import { PulseLoader } from 'react-spinners';
+import { deleteList, generateList, getData } from './utils/queryFunctions';
 export interface ItemFunctionType {
   updateAmount: (id: number, newAmount: number) => Promise<void>;
   changeCompleted: (id: number, newValue: boolean) => Promise<void>;
@@ -51,119 +46,76 @@ export type ControlButtonPropTypes = {
   };
 };
 export default function App() {
+  const queryClient = useQueryClient();
   const {
-    Clear,
-    Generate,
-    data,
-    updateAmount,
-    changeCompleted,
-    deleteItem,
-    hasData,
-    deletedAmount,
-    deletedData,
-    totalAmount,
-    restoreItem,
-    stats,
-  } = useShopping('shopping', 'categories', 'deleted_shopping');
-  const { current, setCurrent } = useTabs();
-  const { setColorBlindValue, currentColorMode } = useColors('colorMode');
+    isLoading,
+    isError,
+    // error,
+    data: items,
+  } = useQuery('shopping', getData, {
+    // select: data => data?.sort((a, b) => a.category.id - b.category.id),
+    refetchOnWindowFocus: true,
+  });
+  const deleteListMutation = useMutation(deleteList, {
+    onSuccess: () => {
+      // Invalidates cache and refetch
+      queryClient.invalidateQueries('shopping');
+    },
+  });
 
-  const itemFunctions: ItemFunctionType = {
-    updateAmount,
-    changeCompleted,
-    deleteItem,
-    currentColorMode,
-  };
-
-  const deletedItemFunctions: DeletedItemFunctionType = {
-    restoreItem,
-  };
-
-  const controlButtonProps: CombinedProps = {
-    setCurrent,
-    Generate,
-    Clear,
-    handleToggleButton,
-    current,
-    hasData,
-    currentColorMode,
-    deletedAmount,
-    totalAmount,
-  };
-
-  useEffect(() => {
-    if (current === 'Raderade' && deletedAmount === 0) {
-      const currentTimer = setTimeout(() => setCurrent('Handlingslista'), 200);
-      currentTimer;
-
-      return () => {
-        clearTimeout(currentTimer);
-      };
-    }
-  }, [current, deletedAmount]);
-
-  function handleToggleButton() {
-    if (current === 'Handlingslista') return setCurrent('Raderade');
-    return setCurrent('Handlingslista');
-  }
+  const generateListMutation = useMutation(generateList, {
+    onSuccess: () => {
+      // Invalidates cache and refetch
+      queryClient.invalidateQueries('shopping');
+    },
+  });
 
   return (
-    <div className="p-8 flex flex-col">
-      <Toaster position="top-right" reverseOrder={false} />
-      <h1
-        className={`text-white text-5xl ${
-          current === 'Inställningar' ? 'mb-0' : 'mb-3'
-        }`}
-      >
-        {current === 'Handlingslista' && 'Handlingslista'}
-        {current === 'Raderade' && 'Borttagna föremål'}
-        {current === 'Inställningar' && 'Inställningar'}
-      </h1>
-
-      <section
-        style={{ width: 'min(100%, 900px)' }}
-        className="flex items-center justify-between mb-2"
-      >
-        {current !== 'Inställningar' && (
-          <ControlButtons {...controlButtonProps} />
-        )}
-
-        {stats.total > 0 && current === 'Handlingslista' && (
-          <Stats stats={stats} />
-        )}
-      </section>
-
-      <main>
-        {hasData && data && current === 'Handlingslista' && (
-          <div className="flex flex-col gap-2">
-            {data.map((item: ItemType) => {
-              return <Item key={item.name} {...item} {...itemFunctions} />;
-            })}
+    <div className="p-8">
+      {!isLoading && (
+        <div className="mb-2">
+          {items ? (
+            <Button
+              disabled={deleteListMutation.isLoading}
+              onClick={() => deleteListMutation.mutate()}
+              color="red"
+            >
+              <p>Radera handlingslistan</p>
+            </Button>
+          ) : (
+            <Button
+              disabled={generateListMutation.isLoading}
+              color="green"
+              onClick={() => generateListMutation.mutate()}
+            >
+              <p>Ny handlingslista</p>
+            </Button>
+          )}
+        </div>
+      )}
+      {isError ? (
+        <div>Ett fel uppstod.</div>
+      ) : (
+        <main>
+          <div>
+            <section>
+              {items && (
+                <div className="flex flex-col gap-y-1">
+                  {items.map((item: SafeItemType) => {
+                    return (
+                      <ItemComponent
+                        key={item.name}
+                        queryClient={queryClient}
+                        {...item}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </section>
           </div>
-        )}
-
-        {deletedData && current === 'Raderade' && (
-          <div className="flex flex-col gap-2">
-            {deletedData.map((item: ItemType) => {
-              return (
-                <DeletedItem
-                  key={item.name}
-                  {...item}
-                  {...deletedItemFunctions}
-                />
-              );
-            })}
-          </div>
-        )}
-
-        {current === 'Inställningar' && (
-          <Settings
-            currentColorMode={currentColorMode}
-            setColorBlindValue={setColorBlindValue}
-            setCurrent={setCurrent}
-          />
-        )}
-      </main>
+        </main>
+      )}
     </div>
   );
 }
